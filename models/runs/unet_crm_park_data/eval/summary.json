@@ -1,0 +1,28 @@
+{
+  "model": "unet",
+  "weights": "models/runs/unet_crm_park_data/best.keras",
+  "n_files": 200,
+  "overall_mean_delta_sdr_dB": 11.223917747909532,
+  "per_snr": {
+    "0": {
+      "n": 47,
+      "mean_delta_sdr_dB": 14.353073729546754,
+      "median_delta_sdr_dB": 13.453046999109306
+    },
+    "5": {
+      "n": 54,
+      "mean_delta_sdr_dB": 12.75579271147775,
+      "median_delta_sdr_dB": 11.784170191621655
+    },
+    "10": {
+      "n": 45,
+      "mean_delta_sdr_dB": 10.444206382319956,
+      "median_delta_sdr_dB": 9.709162651232344
+    },
+    "15": {
+      "n": 54,
+      "mean_delta_sdr_dB": 7.618277604981706,
+      "median_delta_sdr_dB": 7.298723296098208
+    }
+  }
+}

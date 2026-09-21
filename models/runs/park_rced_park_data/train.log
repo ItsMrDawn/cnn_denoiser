@@ -1,0 +1,300 @@
+2026-05-16 03:34:16.762772: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1778902459.200263     494 gpu_device.cc:2020] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 9554 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4070, pci bus id: 0000:0e:00.0, compute capability: 8.9
+GPU(s) configured: ['/physical_device:GPU:0']
+Mixed precision enabled (FP16)
+train examples: 64800, steps/epoch: 4050
+val examples:   7200, val_steps: 450
+Model: park  params: 352,361
+Epoch 1/60
+2026-05-16 03:34:27.798074: I tensorflow/core/kernels/data/tf_record_dataset_op.cc:390] TFRecordDataset `buffer_size` is unspecified, default to 262144
+2026-05-16 03:34:29.723348: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:473] Loaded cuDNN version 90701
+
+Epoch 1: val_loss improved from None to 0.00013, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 1: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1316s - 325ms/step - logmag_l1: 0.0110 - loss: 0.0012 - val_logmag_l1: 0.0056 - val_loss: 1.3321e-04 - learning_rate: 0.0010
+Epoch 2/60
+
+Epoch 2: val_loss improved from 0.00013 to 0.00010, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 2: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0066 - loss: 1.6138e-04 - val_logmag_l1: 0.0049 - val_loss: 1.0478e-04 - learning_rate: 0.0010
+Epoch 3/60
+
+Epoch 3: val_loss improved from 0.00010 to 0.00008, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 3: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1213s - 299ms/step - logmag_l1: 0.0039 - loss: 9.0215e-05 - val_logmag_l1: 0.0031 - val_loss: 7.5333e-05 - learning_rate: 0.0010
+Epoch 4/60
+
+Epoch 4: val_loss improved from 0.00008 to 0.00006, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 4: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1211s - 299ms/step - logmag_l1: 0.0030 - loss: 6.6367e-05 - val_logmag_l1: 0.0036 - val_loss: 5.6115e-05 - learning_rate: 0.0010
+Epoch 5/60
+
+Epoch 5: val_loss improved from 0.00006 to 0.00005, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 5: finished saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 5: ReduceLROnPlateau reducing learning rate to 0.0005000000237487257.
+4050/4050 - 1213s - 300ms/step - logmag_l1: 0.0026 - loss: 5.1084e-05 - val_logmag_l1: 0.0031 - val_loss: 4.8524e-05 - learning_rate: 0.0010
+Epoch 6/60
+
+Epoch 6: val_loss improved from 0.00005 to 0.00004, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 6: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1219s - 301ms/step - logmag_l1: 0.0023 - loss: 4.0784e-05 - val_logmag_l1: 0.0022 - val_loss: 4.4294e-05 - learning_rate: 5.0000e-04
+Epoch 7/60
+
+Epoch 7: val_loss improved from 0.00004 to 0.00004, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 7: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1211s - 299ms/step - logmag_l1: 0.0022 - loss: 3.8094e-05 - val_logmag_l1: 0.0021 - val_loss: 3.9618e-05 - learning_rate: 5.0000e-04
+Epoch 8/60
+
+Epoch 8: val_loss improved from 0.00004 to 0.00004, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 8: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1209s - 299ms/step - logmag_l1: 0.0021 - loss: 3.6017e-05 - val_logmag_l1: 0.0025 - val_loss: 3.7220e-05 - learning_rate: 5.0000e-04
+Epoch 9/60
+
+Epoch 9: val_loss improved from 0.00004 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 9: finished saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 9: ReduceLROnPlateau reducing learning rate to 0.0002500000118743628.
+4050/4050 - 1220s - 301ms/step - logmag_l1: 0.0021 - loss: 3.4666e-05 - val_logmag_l1: 0.0020 - val_loss: 3.4260e-05 - learning_rate: 5.0000e-04
+Epoch 10/60
+
+Epoch 10: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 10: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0020 - loss: 3.2092e-05 - val_logmag_l1: 0.0019 - val_loss: 3.2811e-05 - learning_rate: 2.5000e-04
+Epoch 11/60
+
+Epoch 11: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 11: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1221s - 302ms/step - logmag_l1: 0.0019 - loss: 3.1469e-05 - val_logmag_l1: 0.0019 - val_loss: 3.2599e-05 - learning_rate: 2.5000e-04
+Epoch 12/60
+
+Epoch 12: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 12: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1216s - 300ms/step - logmag_l1: 0.0019 - loss: 3.0909e-05 - val_logmag_l1: 0.0021 - val_loss: 3.2257e-05 - learning_rate: 2.5000e-04
+Epoch 13/60
+
+Epoch 13: val_loss did not improve from 0.00003
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0019 - loss: 3.0538e-05 - val_logmag_l1: 0.0021 - val_loss: 3.2512e-05 - learning_rate: 2.5000e-04
+Epoch 14/60
+
+Epoch 14: val_loss did not improve from 0.00003
+
+Epoch 14: ReduceLROnPlateau reducing learning rate to 0.0001250000059371814.
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0019 - loss: 3.0035e-05 - val_logmag_l1: 0.0022 - val_loss: 3.6698e-05 - learning_rate: 2.5000e-04
+Epoch 15/60
+
+Epoch 15: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 15: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1220s - 301ms/step - logmag_l1: 0.0018 - loss: 2.8964e-05 - val_logmag_l1: 0.0019 - val_loss: 2.9741e-05 - learning_rate: 1.2500e-04
+Epoch 16/60
+
+Epoch 16: val_loss did not improve from 0.00003
+4050/4050 - 1221s - 302ms/step - logmag_l1: 0.0018 - loss: 2.8753e-05 - val_logmag_l1: 0.0018 - val_loss: 3.0308e-05 - learning_rate: 1.2500e-04
+Epoch 17/60
+
+Epoch 17: val_loss did not improve from 0.00003
+4050/4050 - 1219s - 301ms/step - logmag_l1: 0.0018 - loss: 2.8543e-05 - val_logmag_l1: 0.0018 - val_loss: 3.0350e-05 - learning_rate: 1.2500e-04
+Epoch 18/60
+
+Epoch 18: val_loss did not improve from 0.00003
+
+Epoch 18: ReduceLROnPlateau reducing learning rate to 6.25000029685907e-05.
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0018 - loss: 2.8280e-05 - val_logmag_l1: 0.0019 - val_loss: 3.0695e-05 - learning_rate: 1.2500e-04
+Epoch 19/60
+
+Epoch 19: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 19: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1219s - 301ms/step - logmag_l1: 0.0018 - loss: 2.7754e-05 - val_logmag_l1: 0.0018 - val_loss: 2.9116e-05 - learning_rate: 6.2500e-05
+Epoch 20/60
+
+Epoch 20: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 20: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1217s - 301ms/step - logmag_l1: 0.0018 - loss: 2.7630e-05 - val_logmag_l1: 0.0019 - val_loss: 2.8991e-05 - learning_rate: 6.2500e-05
+Epoch 21/60
+
+Epoch 21: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 21: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1216s - 300ms/step - logmag_l1: 0.0018 - loss: 2.7568e-05 - val_logmag_l1: 0.0018 - val_loss: 2.8894e-05 - learning_rate: 6.2500e-05
+Epoch 22/60
+
+Epoch 22: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 22: finished saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 22: ReduceLROnPlateau reducing learning rate to 3.125000148429535e-05.
+4050/4050 - 1215s - 300ms/step - logmag_l1: 0.0018 - loss: 2.7465e-05 - val_logmag_l1: 0.0018 - val_loss: 2.8781e-05 - learning_rate: 6.2500e-05
+Epoch 23/60
+
+Epoch 23: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 23: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0017 - loss: 2.7188e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8413e-05 - learning_rate: 3.1250e-05
+Epoch 24/60
+2026-05-16 11:42:19.681248: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 8322816 bytes after encountering the first element of size 8322816 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 24: val_loss did not improve from 0.00003
+4050/4050 - 1217s - 301ms/step - logmag_l1: 0.0017 - loss: 2.7099e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8840e-05 - learning_rate: 3.1250e-05
+Epoch 25/60
+
+Epoch 25: val_loss did not improve from 0.00003
+4050/4050 - 1217s - 301ms/step - logmag_l1: 0.0017 - loss: 2.7058e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8638e-05 - learning_rate: 3.1250e-05
+Epoch 26/60
+2026-05-16 12:23:43.281212: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 8322816 bytes after encountering the first element of size 8322816 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 26: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 26: finished saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 26: ReduceLROnPlateau reducing learning rate to 1.5625000742147677e-05.
+4050/4050 - 1265s - 312ms/step - logmag_l1: 0.0017 - loss: 2.7020e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8353e-05 - learning_rate: 3.1250e-05
+Epoch 27/60
+
+Epoch 27: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 27: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0017 - loss: 2.6879e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8177e-05 - learning_rate: 1.5625e-05
+Epoch 28/60
+
+Epoch 28: val_loss did not improve from 0.00003
+4050/4050 - 1214s - 300ms/step - logmag_l1: 0.0017 - loss: 2.6845e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8270e-05 - learning_rate: 1.5625e-05
+Epoch 29/60
+
+Epoch 29: val_loss did not improve from 0.00003
+4050/4050 - 1221s - 302ms/step - logmag_l1: 0.0017 - loss: 2.6822e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8301e-05 - learning_rate: 1.5625e-05
+Epoch 30/60
+
+Epoch 30: val_loss did not improve from 0.00003
+
+Epoch 30: ReduceLROnPlateau reducing learning rate to 7.812500371073838e-06.
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0017 - loss: 2.6779e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8372e-05 - learning_rate: 1.5625e-05
+Epoch 31/60
+
+Epoch 31: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 31: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1212s - 299ms/step - logmag_l1: 0.0017 - loss: 2.6742e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8142e-05 - learning_rate: 7.8125e-06
+Epoch 32/60
+
+Epoch 32: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 32: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1208s - 298ms/step - logmag_l1: 0.0017 - loss: 2.6699e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8137e-05 - learning_rate: 7.8125e-06
+Epoch 33/60
+
+Epoch 33: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 33: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1215s - 300ms/step - logmag_l1: 0.0017 - loss: 2.6709e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8102e-05 - learning_rate: 7.8125e-06
+Epoch 34/60
+
+Epoch 34: val_loss did not improve from 0.00003
+
+Epoch 34: ReduceLROnPlateau reducing learning rate to 3.906250185536919e-06.
+4050/4050 - 1221s - 301ms/step - logmag_l1: 0.0017 - loss: 2.6696e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8110e-05 - learning_rate: 7.8125e-06
+Epoch 35/60
+
+Epoch 35: val_loss did not improve from 0.00003
+4050/4050 - 1212s - 299ms/step - logmag_l1: 0.0017 - loss: 2.6657e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8119e-05 - learning_rate: 3.9063e-06
+Epoch 36/60
+
+Epoch 36: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 36: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1217s - 300ms/step - logmag_l1: 0.0017 - loss: 2.6636e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8099e-05 - learning_rate: 3.9063e-06
+Epoch 37/60
+
+Epoch 37: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 37: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1216s - 300ms/step - logmag_l1: 0.0017 - loss: 2.6642e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8072e-05 - learning_rate: 3.9063e-06
+Epoch 38/60
+
+Epoch 38: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 38: finished saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 38: ReduceLROnPlateau reducing learning rate to 1.9531250927684596e-06.
+4050/4050 - 1218s - 301ms/step - logmag_l1: 0.0017 - loss: 2.6625e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8072e-05 - learning_rate: 3.9063e-06
+Epoch 39/60
+
+Epoch 39: val_loss did not improve from 0.00003
+4050/4050 - 1216s - 300ms/step - logmag_l1: 0.0017 - loss: 2.6634e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8084e-05 - learning_rate: 1.9531e-06
+Epoch 40/60
+
+Epoch 40: val_loss improved from 0.00003 to 0.00003, saving model to models/runs/park_rced_park_data/best.keras
+
+Epoch 40: finished saving model to models/runs/park_rced_park_data/best.keras
+4050/4050 - 1217s - 301ms/step - logmag_l1: 0.0017 - loss: 2.6623e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8064e-05 - learning_rate: 1.9531e-06
+Epoch 41/60
+
+Epoch 41: val_loss did not improve from 0.00003
+4050/4050 - 1214s - 300ms/step - logmag_l1: 0.0017 - loss: 2.6592e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8073e-05 - learning_rate: 1.9531e-06
+Epoch 42/60
+
+Epoch 42: val_loss did not improve from 0.00003
+
+Epoch 42: ReduceLROnPlateau reducing learning rate to 1e-06.
+4050/4050 - 1220s - 301ms/step - logmag_l1: 0.0017 - loss: 2.6608e-05 - val_logmag_l1: 0.0017 - val_loss: 2.8085e-05 - learning_rate: 1.9531e-06
+Epoch 43/60
+Traceback (most recent call last):
+  File "/workspace/cnn_denoiser/scripts/training/train.py", line 168, in <module>
+    model.save(args.out_dir / "last.keras")
+    ^^^^^^
+  File "/workspace/cnn_denoiser/scripts/training/train.py", line 152, in main
+    ),
+      
+  File "/usr/local/lib/python3.12/dist-packages/keras/src/utils/traceback_utils.py", line 117, in error_handler
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/keras/src/backend/tensorflow/trainer.py", line 399, in fit
+    logs = self.train_function(iterator)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/keras/src/backend/tensorflow/trainer.py", line 241, in function
+    opt_outputs = multi_step_on_iterator(iterator)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/util/traceback_utils.py", line 150, in error_handler
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 833, in __call__
+    result = self._call(*args, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/polymorphic_function/polymorphic_function.py", line 878, in _call
+    results = tracing_compilation.call_function(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/polymorphic_function/tracing_compilation.py", line 139, in call_function
+    return function._call_flat(  # pylint: disable=protected-access
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/polymorphic_function/concrete_function.py", line 1322, in _call_flat
+    return self._inference_function.call_preflattened(args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/polymorphic_function/atomic_function.py", line 216, in call_preflattened
+    flat_outputs = self.call_flat(*args)
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/polymorphic_function/atomic_function.py", line 251, in call_flat
+    outputs = self._bound_context.call_function(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/context.py", line 1688, in call_function
+    outputs = execute.execute(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/tensorflow/python/eager/execute.py", line 53, in quick_execute
+    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

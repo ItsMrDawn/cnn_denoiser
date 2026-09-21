@@ -1,0 +1,28 @@
+{
+  "model": "park",
+  "weights": "models/runs/park_rced_park_data/best.keras",
+  "n_files": 200,
+  "overall_mean_delta_sdr_dB": 8.545641995473822,
+  "per_snr": {
+    "0": {
+      "n": 47,
+      "mean_delta_sdr_dB": 11.70044288059064,
+      "median_delta_sdr_dB": 11.032029638548474
+    },
+    "5": {
+      "n": 54,
+      "mean_delta_sdr_dB": 9.906172413642233,
+      "median_delta_sdr_dB": 9.087171668835856
+    },
+    "10": {
+      "n": 45,
+      "mean_delta_sdr_dB": 7.83561141380731,
+      "median_delta_sdr_dB": 7.344187617914731
+    },
+    "15": {
+      "n": 54,
+      "mean_delta_sdr_dB": 5.03095851387028,
+      "median_delta_sdr_dB": 4.861901285492541
+    }
+  }
+}

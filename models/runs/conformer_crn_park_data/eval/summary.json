@@ -1,0 +1,28 @@
+{
+  "model": "conformer",
+  "weights": "models/runs/conformer_crn_park_data/best.keras",
+  "n_files": 200,
+  "overall_mean_delta_sdr_dB": 11.260441435498501,
+  "per_snr": {
+    "0": {
+      "n": 47,
+      "mean_delta_sdr_dB": 14.431325857038535,
+      "median_delta_sdr_dB": 13.626689158889436
+    },
+    "5": {
+      "n": 54,
+      "mean_delta_sdr_dB": 12.81401454960364,
+      "median_delta_sdr_dB": 11.56372800790106
+    },
+    "10": {
+      "n": 45,
+      "mean_delta_sdr_dB": 10.44062890566082,
+      "median_delta_sdr_dB": 9.92875677111302
+    },
+    "15": {
+      "n": 54,
+      "mean_delta_sdr_dB": 7.630201581214,
+      "median_delta_sdr_dB": 7.486131401378092
+    }
+  }
+}

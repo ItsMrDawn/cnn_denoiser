@@ -1,0 +1,198 @@
+2026-05-15 04:00:31.578020: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1778817633.756051   30060 gpu_device.cc:2020] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 9554 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4070, pci bus id: 0000:0e:00.0, compute capability: 8.9
+GPU(s) configured: ['/physical_device:GPU:0']
+Mixed precision enabled (FP16)
+train examples: 64800, steps/epoch: 4050
+val examples:   7200, val_steps: 450
+Model: unet  params: 36,351,042
+Epoch 1/40
+2026-05-15 04:00:51.434274: I tensorflow/core/kernels/data/tf_record_dataset_op.cc:390] TFRecordDataset `buffer_size` is unspecified, default to 262144
+2026-05-15 04:00:53.680859: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:473] Loaded cuDNN version 90701
+2026-05-15 04:01:08.234005: W external/local_xla/xla/tsl/framework/bfc_allocator.cc:310] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.07GiB with freed_by_count=0. The caller indicates that this is not a failure, but this may mean that there could be performance gains if more memory were available.
+2026-05-15 04:01:44.413870: W external/local_xla/xla/tsl/framework/bfc_allocator.cc:310] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.07GiB with freed_by_count=0. The caller indicates that this is not a failure, but this may mean that there could be performance gains if more memory were available.
+
+Epoch 1: val_loss improved from None to -1.54997, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 1: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2424s - 599ms/step - loss: -1.4767e+00 - mask_mse: 0.0659 - val_loss: -1.5500e+00 - val_mask_mse: 0.0614 - learning_rate: 5.0000e-04
+Epoch 2/40
+
+Epoch 2: val_loss improved from -1.54997 to -1.69335, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 2: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2322s - 573ms/step - loss: -1.7722e+00 - mask_mse: 0.0539 - val_loss: -1.6933e+00 - val_mask_mse: 0.0569 - learning_rate: 5.0000e-04
+Epoch 3/40
+
+Epoch 3: val_loss improved from -1.69335 to -1.92683, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 3: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2315s - 572ms/step - loss: -1.8669e+00 - mask_mse: 0.0511 - val_loss: -1.9268e+00 - val_mask_mse: 0.0507 - learning_rate: 5.0000e-04
+Epoch 4/40
+
+Epoch 4: val_loss improved from -1.92683 to -1.98651, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 4: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2318s - 572ms/step - loss: -1.9199e+00 - mask_mse: 0.0496 - val_loss: -1.9865e+00 - val_mask_mse: 0.0492 - learning_rate: 5.0000e-04
+Epoch 5/40
+2026-05-15 07:14:38.348013: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 16514048 bytes after encountering the first element of size 16514048 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 5: val_loss did not improve from -1.98651
+4050/4050 - 2314s - 571ms/step - loss: -1.9605e+00 - mask_mse: 0.0485 - val_loss: -1.9747e+00 - val_mask_mse: 0.0493 - learning_rate: 5.0000e-04
+Epoch 6/40
+
+Epoch 6: val_loss improved from -1.98651 to -2.04016, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 6: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2324s - 574ms/step - loss: -1.9904e+00 - mask_mse: 0.0477 - val_loss: -2.0402e+00 - val_mask_mse: 0.0478 - learning_rate: 5.0000e-04
+Epoch 7/40
+
+Epoch 7: val_loss improved from -2.04016 to -2.04950, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 7: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2314s - 571ms/step - loss: -2.0137e+00 - mask_mse: 0.0471 - val_loss: -2.0495e+00 - val_mask_mse: 0.0474 - learning_rate: 5.0000e-04
+Epoch 8/40
+
+Epoch 8: val_loss improved from -2.04950 to -2.06644, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 8: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2318s - 572ms/step - loss: -2.0360e+00 - mask_mse: 0.0465 - val_loss: -2.0664e+00 - val_mask_mse: 0.0471 - learning_rate: 5.0000e-04
+Epoch 9/40
+
+Epoch 9: val_loss improved from -2.06644 to -2.10066, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 9: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2318s - 572ms/step - loss: -2.0541e+00 - mask_mse: 0.0460 - val_loss: -2.1007e+00 - val_mask_mse: 0.0462 - learning_rate: 5.0000e-04
+Epoch 10/40
+
+Epoch 10: val_loss improved from -2.10066 to -2.13600, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 10: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2323s - 573ms/step - loss: -2.0693e+00 - mask_mse: 0.0456 - val_loss: -2.1360e+00 - val_mask_mse: 0.0455 - learning_rate: 5.0000e-04
+Epoch 11/40
+
+Epoch 11: val_loss did not improve from -2.13600
+4050/4050 - 2321s - 573ms/step - loss: -2.0828e+00 - mask_mse: 0.0453 - val_loss: -2.1221e+00 - val_mask_mse: 0.0457 - learning_rate: 5.0000e-04
+Epoch 12/40
+
+Epoch 12: val_loss improved from -2.13600 to -2.14556, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 12: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2321s - 573ms/step - loss: -2.0954e+00 - mask_mse: 0.0450 - val_loss: -2.1456e+00 - val_mask_mse: 0.0452 - learning_rate: 5.0000e-04
+Epoch 13/40
+
+Epoch 13: val_loss did not improve from -2.14556
+4050/4050 - 2312s - 571ms/step - loss: -2.1061e+00 - mask_mse: 0.0447 - val_loss: -2.1197e+00 - val_mask_mse: 0.0457 - learning_rate: 5.0000e-04
+Epoch 14/40
+
+Epoch 14: val_loss did not improve from -2.14556
+4050/4050 - 2317s - 572ms/step - loss: -2.1161e+00 - mask_mse: 0.0444 - val_loss: -2.1432e+00 - val_mask_mse: 0.0452 - learning_rate: 5.0000e-04
+Epoch 15/40
+2026-05-15 13:41:00.367685: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 16514048 bytes after encountering the first element of size 16514048 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 15: val_loss improved from -2.14556 to -2.16170, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 15: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2319s - 573ms/step - loss: -2.1262e+00 - mask_mse: 0.0442 - val_loss: -2.1617e+00 - val_mask_mse: 0.0448 - learning_rate: 5.0000e-04
+Epoch 16/40
+
+Epoch 16: val_loss did not improve from -2.16170
+4050/4050 - 2319s - 573ms/step - loss: -2.1345e+00 - mask_mse: 0.0440 - val_loss: -2.1548e+00 - val_mask_mse: 0.0449 - learning_rate: 5.0000e-04
+Epoch 17/40
+
+Epoch 17: val_loss did not improve from -2.16170
+4050/4050 - 2316s - 572ms/step - loss: -2.1420e+00 - mask_mse: 0.0438 - val_loss: -2.1547e+00 - val_mask_mse: 0.0449 - learning_rate: 5.0000e-04
+Epoch 18/40
+2026-05-15 15:36:59.983862: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 16514048 bytes after encountering the first element of size 16514048 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 18: val_loss improved from -2.16170 to -2.16192, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 18: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2325s - 574ms/step - loss: -2.1497e+00 - mask_mse: 0.0436 - val_loss: -2.1619e+00 - val_mask_mse: 0.0448 - learning_rate: 5.0000e-04
+Epoch 19/40
+
+Epoch 19: val_loss improved from -2.16192 to -2.17988, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 19: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2321s - 573ms/step - loss: -2.1574e+00 - mask_mse: 0.0435 - val_loss: -2.1799e+00 - val_mask_mse: 0.0444 - learning_rate: 5.0000e-04
+Epoch 20/40
+2026-05-15 16:54:19.419314: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 16514048 bytes after encountering the first element of size 16514048 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 20: val_loss did not improve from -2.17988
+4050/4050 - 2317s - 572ms/step - loss: -2.1632e+00 - mask_mse: 0.0433 - val_loss: -2.1682e+00 - val_mask_mse: 0.0446 - learning_rate: 5.0000e-04
+Epoch 21/40
+
+Epoch 21: val_loss did not improve from -2.17988
+4050/4050 - 2312s - 571ms/step - loss: -2.1692e+00 - mask_mse: 0.0432 - val_loss: -2.1608e+00 - val_mask_mse: 0.0448 - learning_rate: 5.0000e-04
+Epoch 22/40
+
+Epoch 22: val_loss did not improve from -2.17988
+
+Epoch 22: ReduceLROnPlateau reducing learning rate to 0.0002500000118743628.
+4050/4050 - 2313s - 571ms/step - loss: -2.1754e+00 - mask_mse: 0.0430 - val_loss: -2.1745e+00 - val_mask_mse: 0.0445 - learning_rate: 5.0000e-04
+Epoch 23/40
+
+Epoch 23: val_loss did not improve from -2.17988
+4050/4050 - 2315s - 572ms/step - loss: -2.1972e+00 - mask_mse: 0.0425 - val_loss: -2.1758e+00 - val_mask_mse: 0.0444 - learning_rate: 2.5000e-04
+Epoch 24/40
+
+Epoch 24: val_loss improved from -2.17988 to -2.18096, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 24: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2315s - 572ms/step - loss: -2.2047e+00 - mask_mse: 0.0423 - val_loss: -2.1810e+00 - val_mask_mse: 0.0443 - learning_rate: 2.5000e-04
+Epoch 25/40
+
+Epoch 25: val_loss improved from -2.18096 to -2.19040, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 25: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2321s - 573ms/step - loss: -2.2095e+00 - mask_mse: 0.0422 - val_loss: -2.1904e+00 - val_mask_mse: 0.0441 - learning_rate: 2.5000e-04
+Epoch 26/40
+
+Epoch 26: val_loss did not improve from -2.19040
+4050/4050 - 2318s - 572ms/step - loss: -2.2137e+00 - mask_mse: 0.0421 - val_loss: -2.1832e+00 - val_mask_mse: 0.0443 - learning_rate: 2.5000e-04
+Epoch 27/40
+
+Epoch 27: val_loss did not improve from -2.19040
+4050/4050 - 2314s - 571ms/step - loss: -2.2184e+00 - mask_mse: 0.0420 - val_loss: -2.1767e+00 - val_mask_mse: 0.0444 - learning_rate: 2.5000e-04
+Epoch 28/40
+2026-05-15 22:03:04.633117: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 16514048 bytes after encountering the first element of size 16514048 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 28: val_loss did not improve from -2.19040
+
+Epoch 28: ReduceLROnPlateau reducing learning rate to 0.0001250000059371814.
+4050/4050 - 2318s - 572ms/step - loss: -2.2213e+00 - mask_mse: 0.0419 - val_loss: -2.1724e+00 - val_mask_mse: 0.0445 - learning_rate: 2.5000e-04
+Epoch 29/40
+
+Epoch 29: val_loss improved from -2.19040 to -2.19057, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 29: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2318s - 572ms/step - loss: -2.2333e+00 - mask_mse: 0.0416 - val_loss: -2.1906e+00 - val_mask_mse: 0.0441 - learning_rate: 1.2500e-04
+Epoch 30/40
+
+Epoch 30: val_loss improved from -2.19057 to -2.19264, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 30: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2320s - 573ms/step - loss: -2.2372e+00 - mask_mse: 0.0415 - val_loss: -2.1926e+00 - val_mask_mse: 0.0440 - learning_rate: 1.2500e-04
+Epoch 31/40
+
+Epoch 31: val_loss improved from -2.19264 to -2.19493, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 31: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2321s - 573ms/step - loss: -2.2395e+00 - mask_mse: 0.0415 - val_loss: -2.1949e+00 - val_mask_mse: 0.0440 - learning_rate: 1.2500e-04
+Epoch 32/40
+
+Epoch 32: val_loss improved from -2.19493 to -2.19556, saving model to models/runs/unet_crm_park_data/best.keras
+
+Epoch 32: finished saving model to models/runs/unet_crm_park_data/best.keras
+4050/4050 - 2305s - 569ms/step - loss: -2.2419e+00 - mask_mse: 0.0414 - val_loss: -2.1956e+00 - val_mask_mse: 0.0440 - learning_rate: 1.2500e-04
+Epoch 33/40
+
+Epoch 33: val_loss did not improve from -2.19556
+4050/4050 - 2314s - 571ms/step - loss: -2.2454e+00 - mask_mse: 0.0414 - val_loss: -2.1791e+00 - val_mask_mse: 0.0443 - learning_rate: 1.2500e-04
+Epoch 34/40
+2026-05-16 01:54:37.923018: W tensorflow/core/kernels/data/prefetch_autotuner.cc:55] Prefetch autotuner tried to allocate 16514048 bytes after encountering the first element of size 16514048 bytes.This already causes the autotune ram budget to be exceeded. To stay within the ram budget, either increase the ram budget or reduce element size
+
+Epoch 34: val_loss did not improve from -2.19556
+4050/4050 - 2314s - 571ms/step - loss: -2.2461e+00 - mask_mse: 0.0413 - val_loss: -2.1814e+00 - val_mask_mse: 0.0443 - learning_rate: 1.2500e-04
+Epoch 35/40
