@@ -13,9 +13,18 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
+# macOS: prevent idle/system sleep for as long as this script runs
+if command -v caffeinate >/dev/null 2>&1; then
+    caffeinate -ims -w $$ &
+fi
+
 # Configuration
+DEFAULT_BATCH_SIZE=16
+if [ "$(uname -sm)" = "Darwin arm64" ]; then
+    DEFAULT_BATCH_SIZE=8  # Apple Silicon unified memory (see Config.BASELINE_BATCH_SIZE)
+fi
 EPOCHS=${1:-100}
-BATCH_SIZE=${2:-16}
+BATCH_SIZE=${2:-$DEFAULT_BATCH_SIZE}
 MODEL_NAME="denoiser_v2"
 MAX_RESTARTS=10
 RESTART_DELAY=30  # seconds to wait before restart
@@ -105,7 +114,11 @@ while [ $restart_count -lt $MAX_RESTARTS ]; do
         
         # Check GPU status
         log "GPU Status:"
-        nvidia-smi --query-gpu=name,memory.used,memory.total,temperature.gpu --format=csv 2>&1 | tee -a "$TRAINING_LOG"
+        if command -v nvidia-smi >/dev/null 2>&1; then
+            nvidia-smi --query-gpu=name,memory.used,memory.total,temperature.gpu --format=csv 2>&1 | tee -a "$TRAINING_LOG"
+        else
+            memory_pressure 2>&1 | tail -1 | tee -a "$TRAINING_LOG"  # unified memory on Apple Silicon
+        fi
         
         # Clear any zombie processes
         pkill -9 -f "scripts/legacy/2-criar_modelo_v2.py" 2>/dev/null || true

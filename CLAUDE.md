@@ -4,9 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Environment
 
-- Python virtual environment: `.venv/` (Python 3.12). Activate with `source .venv/bin/activate`.
-- GPU: NVIDIA RTX 4070 (12GB VRAM). All training scripts enforce GPU-only execution and will exit with code 3 if no GPU is found.
-- Mixed precision (FP16) is enabled globally via `setup_gpu()` in `config.py`.
+- Python virtual environment: `.venv/` (Python 3.12). Activate with `source .venv/bin/activate`. Install with `uv pip install -r requirements.txt`.
+- Supported hardware: NVIDIA GPU via CUDA (originally an RTX 4070, 12GB) or Apple Silicon via `tensorflow-metal` (M4, 24GB unified memory). The search script enforces GPU-only execution and exits with code 3 if no GPU is found.
+- TF is pinned to 2.18 because `tensorflow-metal` 1.2.0 fails to load against 2.19+; TF 2.18 in turn caps NumPy < 2.1, so librosa resolves to 0.11.
+- Hardware-dependent defaults live in `Config` and switch on `IS_APPLE_SILICON`: mixed precision (FP16 on CUDA, FP32 on Metal, where FP16 benchmarked slower), `BASELINE_BATCH_SIZE` (16 vs 8), RAM caching of the dataset (always on CUDA; on Apple only if it fits 15% of RAM, else streamed from disk), and shuffle buffer size.
 
 ## Common Commands
 
@@ -17,11 +18,15 @@ source .venv/bin/activate
 # Verify config and STFT shapes
 python config.py
 
-# Generate TFRecords from dataset
-python scripts/legacy/1-gerar_tfrecord_v2.py
+# Fetch MS-SNSD and synthesize dataset/ (CleanSpeech_training, NoisySpeech_training, clean_test, noise_test)
+scripts/data/prepare_dataset.sh
+
+# Generate TFRecords from dataset (parallel across all CPU cores; small shards help the file-level val split)
+python scripts/legacy/1-gerar_tfrecord_v2.py --samples-per-shard 500
 
 # Train model (from repo root)
 python scripts/legacy/2-criar_modelo_v2.py
+python scripts/legacy/2-criar_modelo_v2.py --steps-per-epoch 50   # Short run on a slower GPU
 
 # Run inference on a file
 python scripts/legacy/3-usar_modelo_v2.py
@@ -80,7 +85,9 @@ The best-found configuration is saved at `models/denoiser_final_winner.keras` (a
 
 - Clean speech: `dataset/CleanSpeech_training/` (~383 WAV files, 16kHz)
 - Noisy speech: `dataset/NoisySpeech_training/` (4 SNR levels per file: 0, 10, 20, 30 dB)
+- Source: Microsoft MS-SNSD (`dataset/MS-SNSD`, cloned by `scripts/data/prepare_dataset.sh`); the top-level dirs are symlinks into it
 - Noisy filename format: `noisy{N}_SNRdb_{snr}_clnsp{N}.wav`
+- MS-SNSD's `snr_mixer` takes a `sqrt` of the noise scalar, so the actual SNR is half the filename label (0/10/20/30 → 0/5/10/15 dB)
 - Preprocessed data: `tfrecords_v2/` (norm stats at `tfrecords_v2/norm_stats.npz`)
 
 ## Key Invariants

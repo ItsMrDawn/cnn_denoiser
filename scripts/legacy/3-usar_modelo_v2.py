@@ -196,26 +196,15 @@ class AudioDenoiser:
 
         # Warm up model with dummy input
         dummy_input = np.zeros(
-            (1, Config.N_FREQ_BINS, Config.N_TIME_FRAMES, 2), dtype=np.float32)
-        _ = self.model.predict(dummy_input, verbose=0)
+            (Config.INFERENCE_BATCH_SIZE, Config.N_FREQ_BINS, Config.N_TIME_FRAMES, 2),
+            dtype=np.float32)
+        _ = self.model.predict_on_batch(dummy_input)
         print("Model warmed up")
 
-    def process_segment(self, audio_segment):
+    def _model_input(self, noisy_stft):
         """
-        Process a single audio segment through the model
-
-        Args:
-            audio_segment: Audio array of length SEGMENT_SAMPLES
-
-        Returns:
-            Denoised audio segment
+        Build the normalized (n_freq, n_time, 2) model input for one STFT
         """
-        # Compute STFT
-        noisy_stft = compute_stft(audio_segment)
-
-        # Store original shape
-        orig_shape = noisy_stft.shape
-
         # Convert to features
         noisy_real, noisy_imag = stft_to_features(noisy_stft)
 
@@ -237,32 +226,56 @@ class AudioDenoiser:
 
         # Stack into input tensor
         model_input = np.stack([noisy_real_norm, noisy_imag_norm], axis=-1)
-        model_input = np.expand_dims(
-            model_input, axis=0)  # Add batch dimension
-        model_input = model_input.astype(np.float32)
+        return model_input.astype(np.float32)
 
-        # Predict mask
-        predicted_mask = self.model.predict(model_input, verbose=0)
+    def process_segments(self, audio_segments):
+        """
+        Process audio segments through the model in a single batched call,
+        amortizing per-call GPU dispatch overhead (significant on Metal)
 
-        # Remove batch dimension
-        predicted_mask = predicted_mask[0]
+        Args:
+            audio_segments: List of audio arrays of length SEGMENT_SAMPLES
 
-        # Trim back to original time dimension
-        predicted_mask = predicted_mask[:, :orig_shape[1], :]
+        Returns:
+            List of denoised audio segments
+        """
+        # Compute STFTs
+        noisy_stfts = [compute_stft(segment) for segment in audio_segments]
 
-        # Extract mask components
-        mask_real = predicted_mask[:, :, 0]
-        mask_imag = predicted_mask[:, :, 1]
+        # Predict masks for the whole batch
+        model_input = np.stack([self._model_input(stft) for stft in noisy_stfts])
+        predicted_masks = np.asarray(self.model.predict_on_batch(model_input))
 
-        # Apply complex mask to noisy spectrogram
-        # Clean = Noisy * Mask
-        mask_complex = mask_real + 1j * mask_imag
-        clean_stft = noisy_stft * mask_complex
+        clean_segments = []
+        for noisy_stft, predicted_mask in zip(noisy_stfts, predicted_masks):
+            # Trim back to original time dimension
+            predicted_mask = predicted_mask[:, :noisy_stft.shape[1], :]
 
-        # Inverse STFT
-        clean_audio = compute_istft(clean_stft)
+            # Extract mask components
+            mask_real = predicted_mask[:, :, 0]
+            mask_imag = predicted_mask[:, :, 1]
 
-        return clean_audio
+            # Apply complex mask to noisy spectrogram
+            # Clean = Noisy * Mask
+            mask_complex = mask_real + 1j * mask_imag
+            clean_stft = noisy_stft * mask_complex
+
+            # Inverse STFT
+            clean_segments.append(compute_istft(clean_stft))
+
+        return clean_segments
+
+    def process_segment(self, audio_segment):
+        """
+        Process a single audio segment through the model
+
+        Args:
+            audio_segment: Audio array of length SEGMENT_SAMPLES
+
+        Returns:
+            Denoised audio segment
+        """
+        return self.process_segments([audio_segment])[0]
 
     def denoise_audio(self, audio, show_progress=True):
         """
@@ -290,15 +303,21 @@ class AudioDenoiser:
             clean_audio = self.process_segment(padded)
             return clean_audio[:original_length]
 
-        # Process each segment
+        # Process segments in batches
         processed_segments = []
 
+        batch_size = Config.INFERENCE_BATCH_SIZE
+        batches = [segments[i:i + batch_size]
+                   for i in range(0, len(segments), batch_size)]
         iterator = tqdm(
-            segments, desc="Processing") if show_progress else segments
+            batches, desc="Processing") if show_progress else batches
 
-        for start_idx, segment in iterator:
-            clean_segment = self.process_segment(segment)
-            processed_segments.append((start_idx, clean_segment))
+        for batch in iterator:
+            clean_segments = self.process_segments(
+                [segment for _, segment in batch])
+            processed_segments.extend(
+                (start_idx, clean_segment)
+                for (start_idx, _), clean_segment in zip(batch, clean_segments))
 
         # Overlap-add reconstruction
         clean_audio = overlap_add_segments(

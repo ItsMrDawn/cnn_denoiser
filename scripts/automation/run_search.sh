@@ -25,6 +25,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 cd "${ROOT_DIR}"
 
+# macOS: prevent idle/system sleep for as long as this script runs
+if command -v caffeinate >/dev/null 2>&1; then
+    caffeinate -ims -w $$ &
+fi
+
 EPOCHS=${1:-50}
 DATASET_FRACTION=${2:-1.0}
 EVAL_SAMPLES=${3:-15}

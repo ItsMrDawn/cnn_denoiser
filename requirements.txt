@@ -1,0 +1,8 @@
+# TF is pinned to 2.18: tensorflow-metal 1.2.0 (Apple Silicon GPU plugin) fails
+# to load against 2.19+ ("Library not loaded: _pywrap_tensorflow_internal.so").
+tensorflow==2.18.*; sys_platform == "darwin"
+tensorflow-metal==1.2.0; sys_platform == "darwin" and platform_machine == "arm64"
+tensorflow[and-cuda]==2.18.*; sys_platform == "linux"
+librosa
+soundfile
+tqdm

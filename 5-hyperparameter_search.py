@@ -37,9 +37,10 @@ from typing import Dict, List, Any, Optional
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
-os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
-os.environ['XLA_FLAGS'] = '--xla_gpu_cuda_data_dir=/usr/local/cuda'
+if sys.platform != 'darwin':  # CUDA-only settings; macOS uses the Metal plugin
+    os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
+    os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
+    os.environ['XLA_FLAGS'] = '--xla_gpu_cuda_data_dir=/usr/local/cuda'
 # Keep XLA disabled for search stability; mixed precision + dropout + XLA has
 # shown graph precision mismatches on this workload.
 
@@ -677,29 +678,28 @@ def generate_refinement_space(source_state_path: str = '', top_n: int = 3) -> Li
 # VRAM-AWARE BATCH SIZE ESTIMATION
 # =============================================================================
 
-def estimate_batch_size(model: Model, target_vram_gb: float = 9.0) -> int:
+def estimate_batch_size(model: Model) -> int:
     """
-    Estimate safe batch size for a model given VRAM budget.
+    Estimate safe batch size for a model given the GPU memory budget.
 
     Uses param count as a rough proxy. Calibrated against the known
-    baseline: 35.2M params → batch 16 fits 12 GB (~9GB working).
-    
+    baseline: 35.2M params → Config.BASELINE_BATCH_SIZE (16 on a 12 GB
+    RTX 4070 with FP16, 8 on a 24 GB unified-memory M4 with FP32).
+
     NOTE: Conservative max of 32 to avoid GPU event manager thrashing.
     Smaller models don't benefit from proportionally larger batches and
     create excessive GPU events that exhaust kernel FD limits.
     """
     n_params = model.count_params()
 
-    # Reference: 35.2M params, batch 16, ~9GB working memory
+    # Reference: 35.2M params at the platform's baseline batch size
     ref_params = 35_200_000
-    ref_batch = 16
-    ref_vram = 9.0
+    ref_batch = Config.BASELINE_BATCH_SIZE
 
     # Memory scales roughly linearly with params and batch size
-    # vram ≈ (n_params / ref_params) * (batch / ref_batch) * ref_vram
-    # => batch = target_vram * ref_batch * ref_params / (n_params * ref_vram)
+    # => batch = ref_batch * ref_params / n_params
 
-    estimated = target_vram_gb * ref_batch * ref_params / (n_params * ref_vram)
+    estimated = ref_batch * ref_params / n_params
     # Clamp to [4, 32] to be conservative on GPU event creation
     # (prevents exhausting kernel FD limits even with smaller models)
     batch = int(estimated)
@@ -726,8 +726,11 @@ def evaluate_model(model_path: str, n_samples: int = 15,
     if snr_levels is None:
         snr_levels = [0, 5, 10, 15, 20]
 
-    # Import the AudioDenoiser from inference script
+    # Import the AudioDenoiser from inference script (in scripts/legacy/)
     from importlib import import_module
+    legacy_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'scripts', 'legacy')
+    if legacy_dir not in sys.path:
+        sys.path.insert(0, legacy_dir)
     usar = import_module('3-usar_modelo_v2')
     denoiser = usar.AudioDenoiser(model_path)
 
@@ -930,6 +933,8 @@ def is_memory_pressure_error(error_msg: str) -> bool:
         'no algorithm worked',
         'tf-allocator-allocation-error',
         'cuda_error_out_of_memory',
+        'insufficient memory',  # Metal: kIOGPUCommandBufferCallbackErrorOutOfMemory
+        'erroroutofmemory',
     ]
     return any(p in text for p in patterns)
 
@@ -1488,8 +1493,11 @@ def main():
 
     # Disable XLA JIT for stability in long-running unattended search.
     tf.config.optimizer.set_jit(False)
+    use_mixed_precision = Config.USE_MIXED_PRECISION and not args.force_fp32
     if args.force_fp32:
         print("Mixed precision: DISABLED (using float32 for stability)")
+    elif not use_mixed_precision:
+        print("Mixed precision: DISABLED (float32 is faster on this GPU)")
     else:
         print("Mixed precision: ENABLED (Tensor Cores active)")
 
@@ -1556,7 +1564,7 @@ def main():
                 cfg, state, args.epochs,
                 train_dataset, val_dataset, train_steps, val_steps,
                 input_shape,
-                use_mixed_precision=not args.force_fp32,
+                use_mixed_precision=use_mixed_precision,
                 eval_samples=args.eval_samples,
                 dataset_fraction=args.dataset_fraction,
             )
