@@ -10,6 +10,12 @@ import soundfile as sf
 import tensorflow as tf
 from typing import Tuple, Optional
 import os
+import platform
+import sys
+
+# Apple Silicon (M-series) runs TF on the GPU through the tensorflow-metal
+# plugin and shares one unified memory pool between CPU and GPU.
+IS_APPLE_SILICON = sys.platform == 'darwin' and platform.machine() == 'arm64'
 
 # =============================================================================
 # CONFIGURATION - All parameters in one place
@@ -37,8 +43,22 @@ class Config:
     # Number of time frames per segment
     N_TIME_FRAMES = SEGMENT_SAMPLES // HOP_LENGTH + 1  # ~251 frames for 2s
 
+    # Hardware-dependent parameters
+    # Batch size the ~35M-param baseline U-Net fits at. On an M4 (24 GB unified
+    # memory, FP32) batch 8 peaks at ~15 GB and batch 16 at ~21 GB with no
+    # throughput gain, so 8 is the ceiling there.
+    BASELINE_BATCH_SIZE = 8 if IS_APPLE_SILICON else 16
+    # FP16 pays off on NVIDIA Tensor Cores; on Metal it measured no faster at
+    # batch 4 and ~35% slower at batch 8, so Apple Silicon trains in FP32.
+    USE_MIXED_PRECISION = not IS_APPLE_SILICON
+    # Max share of physical RAM the tf.data in-memory cache may use (None =
+    # always cache). Unified memory is shared with the GPU, so keep it small.
+    RAM_CACHE_FRACTION = 0.15 if IS_APPLE_SILICON else None
+    SHUFFLE_BUFFER = 512 if IS_APPLE_SILICON else 2000  # ~1 MB per example
+    INFERENCE_BATCH_SIZE = 8  # Segments per model call during inference
+
     # Training parameters
-    BATCH_SIZE = 128     # Good for RTX 4070
+    BATCH_SIZE = BASELINE_BATCH_SIZE if IS_APPLE_SILICON else 128  # 128: RTX 4070
     EPOCHS = 100
     LEARNING_RATE = 1e-3
     MIN_LEARNING_RATE = 1e-6
@@ -366,14 +386,18 @@ def setup_gpu():
     if gpus:
         try:
             # Enable memory growth to avoid allocating all GPU memory
-            for gpu in gpus:
-                tf.config.experimental.set_memory_growth(gpu, True)
+            # (CUDA only; Metal allocates from unified memory on demand)
+            if not IS_APPLE_SILICON:
+                for gpu in gpus:
+                    tf.config.experimental.set_memory_growth(gpu, True)
 
-            # Enable mixed precision for tensor cores
-            tf.keras.mixed_precision.set_global_policy('mixed_float16')
+            if Config.USE_MIXED_PRECISION:
+                tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
-            print(f"GPU(s) configured: {[gpu.name for gpu in gpus]}")
-            print("Mixed precision enabled (FP16)")
+            backend = 'Metal' if IS_APPLE_SILICON else 'CUDA'
+            print(f"GPU(s) configured ({backend}): {[gpu.name for gpu in gpus]}")
+            print("Mixed precision enabled (FP16)" if Config.USE_MIXED_PRECISION
+                  else "Precision: FP32")
 
         except RuntimeError as e:
             print(f"GPU configuration error: {e}")

@@ -22,10 +22,11 @@ if ROOT_DIR not in sys.path:
 # Suppress ALL TensorFlow, CUDA, and XLA warnings BEFORE importing TF
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Suppress TF C++ logging (0=all, 3=none)
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Disable oneDNN messages
-os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'  # Better async memory allocation
-os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'  # Consistent GPU ordering
-os.environ['XLA_FLAGS'] = '--xla_gpu_cuda_data_dir=/usr/local/cuda'  # Suppress XLA warnings
-os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'  # Quiet XLA
+if sys.platform != 'darwin':  # CUDA-only settings; macOS uses the Metal plugin
+    os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'  # Better async memory allocation
+    os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'  # Consistent GPU ordering
+    os.environ['XLA_FLAGS'] = '--xla_gpu_cuda_data_dir=/usr/local/cuda'  # Suppress XLA warnings
+    os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'  # Quiet XLA
 
 
 class StderrFilter:
@@ -398,7 +399,7 @@ def mask_mae(y_true, y_pred):
 # TRAINING
 # =============================================================================
 
-def create_callbacks(model_name, log_dir):
+def create_callbacks(model_name, log_dir, steps_per_epoch):
     """Create training callbacks"""
 
     timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
@@ -419,7 +420,7 @@ def create_callbacks(model_name, log_dir):
         ModelCheckpoint(
             filepath=os.path.join(
                 Config.MODEL_DIR, f'{model_name}-{{epoch:03d}}.keras'),
-            save_freq=10 * 886,  # 10 epochs * steps_per_epoch (will be adjusted at runtime)
+            save_freq=10 * steps_per_epoch,  # every 10 epochs
             save_best_only=False,
             verbose=0
         ),
@@ -501,11 +502,12 @@ def train_model(
     batch_size=Config.BATCH_SIZE,
     learning_rate=Config.LEARNING_RATE,
     resume_from=None,
-    auto_resume=True
+    auto_resume=True,
+    steps_per_epoch=None
 ):
     """
     Train the denoiser model
-    
+
     Args:
         model_name: Name for saving model files
         epochs: Total epochs to train
@@ -513,6 +515,8 @@ def train_model(
         learning_rate: Initial learning rate
         resume_from: Explicit path to resume from
         auto_resume: If True, automatically find and resume from latest checkpoint
+        steps_per_epoch: Cap on training steps per epoch (validation is scaled
+            to match); None runs the full dataset each epoch
     """
     # Setup
     setup_gpu()
@@ -536,6 +540,9 @@ def train_model(
     train_dataset, val_dataset, train_steps, val_steps = load_tfrecord_dataset(
         batch_size=batch_size
     )
+    if steps_per_epoch and steps_per_epoch < train_steps:
+        val_steps = max(1, val_steps * steps_per_epoch // train_steps)
+        train_steps = steps_per_epoch
 
     # Get input shape from dataset
     for inputs, targets in train_dataset.take(1):
@@ -582,7 +589,7 @@ def train_model(
     model.summary()
 
     # Callbacks
-    callbacks = create_callbacks(model_name, Config.LOG_DIR)
+    callbacks = create_callbacks(model_name, Config.LOG_DIR, train_steps)
 
     # Train
     remaining_epochs = epochs - initial_epoch
@@ -643,6 +650,8 @@ if __name__ == "__main__":
                         help='Path to model to resume from (auto-detects if not specified)')
     parser.add_argument('--no-auto-resume', action='store_true',
                         help='Disable automatic checkpoint detection')
+    parser.add_argument('--steps-per-epoch', type=int, default=None,
+                        help='Cap training steps per epoch (for short runs on slower GPUs)')
 
     args = parser.parse_args()
     
@@ -666,7 +675,8 @@ if __name__ == "__main__":
             batch_size=args.batch_size,
             learning_rate=args.lr,
             resume_from=args.resume,
-            auto_resume=not args.no_auto_resume
+            auto_resume=not args.no_auto_resume,
+            steps_per_epoch=args.steps_per_epoch
         )
         
         end_time = datetime.now()

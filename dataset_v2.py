@@ -114,6 +114,15 @@ def parse_tfrecord(serialized_example):
     return inputs, targets
 
 
+def _fits_in_ram_cache(filenames) -> bool:
+    """Whether the parsed dataset (~ its on-disk size) fits Config.RAM_CACHE_FRACTION"""
+    if Config.RAM_CACHE_FRACTION is None:
+        return True
+    dataset_bytes = sum(os.path.getsize(f) for f in filenames)
+    ram_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
+    return dataset_bytes <= Config.RAM_CACHE_FRACTION * ram_bytes
+
+
 def load_tfrecord_dataset(
     data_dir=None,
     batch_size=None,
@@ -198,14 +207,17 @@ def load_tfrecord_dataset(
 
     # Cache datasets to memory to avoid re-reading from disk
     # This eliminates the periodic GPU stalls from disk I/O
-    print("Caching datasets to memory (this may take a moment)...")
-    train_dataset = train_dataset.cache()
-    val_dataset = val_dataset.cache()
+    if _fits_in_ram_cache(filenames):
+        print("Caching datasets to memory (this may take a moment)...")
+        train_dataset = train_dataset.cache()
+        val_dataset = val_dataset.cache()
+    else:
+        print("Dataset exceeds RAM cache budget; streaming from disk")
 
     # Shuffle, batch, and prefetch for training
     if shuffle:
         # Smaller shuffle buffer to reduce memory and startup time
-        train_dataset = train_dataset.shuffle(buffer_size=2000)
+        train_dataset = train_dataset.shuffle(buffer_size=Config.SHUFFLE_BUFFER)
 
     # IMPORTANT: Add repeat() to prevent "ran out of data" errors
     train_dataset = train_dataset.repeat()

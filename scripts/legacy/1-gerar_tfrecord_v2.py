@@ -10,6 +10,12 @@ Key improvements:
 """
 
 import os
+import sys
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
@@ -134,7 +140,23 @@ def process_audio_pair(clean_path, noisy_path, snr, max_mag):
         return []
 
 
-def compute_global_stats(pairs, num_samples=1000):
+def _noisy_magnitudes(noisy_path):
+    """Worker: STFT magnitudes of one noisy file (None on failure)"""
+    try:
+        noisy_audio, _ = load_audio(noisy_path)
+        return np.abs(compute_stft(noisy_audio)).flatten()
+    except Exception:
+        return None
+
+
+def _serialize_pair(job):
+    """Worker: process one audio pair into serialized TFRecord examples"""
+    clean_path, noisy_path, snr, max_mag = job
+    return [serialize_example(*example)
+            for example in process_audio_pair(clean_path, noisy_path, snr, max_mag)]
+
+
+def compute_global_stats(pairs, num_samples=1000, pool=None):
     """
     Compute global normalization statistics from a sample of the dataset
     """
@@ -144,16 +166,11 @@ def compute_global_stats(pairs, num_samples=1000):
     np.random.shuffle(pairs)
     sample_pairs = pairs[:min(num_samples, len(pairs))]
 
-    all_mags = []
-
-    for clean_path, noisy_path, _ in tqdm(sample_pairs, desc="Computing stats"):
-        try:
-            noisy_audio, _ = load_audio(noisy_path)
-            stft = compute_stft(noisy_audio)
-            mag = np.abs(stft)
-            all_mags.append(mag.flatten())
-        except Exception as e:
-            continue
+    noisy_paths = [noisy_path for _, noisy_path, _ in sample_pairs]
+    mapper = pool.imap(_noisy_magnitudes, noisy_paths, chunksize=8) if pool else map(
+        _noisy_magnitudes, noisy_paths)
+    all_mags = [mag for mag in tqdm(mapper, total=len(noisy_paths), desc="Computing stats")
+                if mag is not None]
 
     all_mags = np.concatenate(all_mags)
 
@@ -192,52 +209,51 @@ def create_tfrecord_dataset(
     if len(pairs) == 0:
         raise ValueError("No audio pairs found!")
 
-    # Compute global normalization statistics
-    mean, std, max_mag = compute_global_stats(pairs)
-    Config.save_norm_stats(mean, std, max_mag)
-    print(f"Normalization stats saved to {Config.get_norm_stats_path()}")
+    if num_workers is None:
+        num_workers = os.cpu_count()
 
-    # Process pairs and write TFRecords serially (memory efficient)
-    print("Processing audio pairs and writing TFRecords...")
+    # Audio loading and STFTs are CPU-bound NumPy work: fan out across all
+    # cores and write from this process. 'spawn' is safe with TF loaded.
+    with multiprocessing.get_context('spawn').Pool(num_workers) as pool:
+        # Compute global normalization statistics
+        mean, std, max_mag = compute_global_stats(pairs, pool=pool)
+        Config.save_norm_stats(mean, std, max_mag)
+        print(f"Normalization stats saved to {Config.get_norm_stats_path()}")
 
-    # Initialize shard tracking with open writer
-    shard_idx = 0
-    current_shard_count = 0
-    total_examples = 0
-    
-    # Open first writer
-    shard_path = os.path.join(output_dir, f'denoiser-{shard_idx:05d}.tfrecord')
-    writer = tf.io.TFRecordWriter(shard_path)
-    
-    # Process pairs one at a time (memory efficient)
-    for clean_path, noisy_path, snr in tqdm(pairs, desc="Processing & Writing"):
-        examples = process_audio_pair(clean_path, noisy_path, snr, max_mag)
-        
-        # Write each example immediately
-        for noisy_real, noisy_imag, mask_real, mask_imag, snr_val in examples:
-            # Check if we need a new shard
-            if current_shard_count >= samples_per_shard:
-                writer.close()
-                shard_idx += 1
-                current_shard_count = 0
-                shard_path = os.path.join(output_dir, f'denoiser-{shard_idx:05d}.tfrecord')
-                writer = tf.io.TFRecordWriter(shard_path)
-            
-            # Write example
-            serialized = serialize_example(
-                noisy_real, noisy_imag, mask_real, mask_imag, snr_val
-            )
-            writer.write(serialized)
-            current_shard_count += 1
-            total_examples += 1
-    
+        print(f"Processing audio pairs and writing TFRecords ({num_workers} workers)...")
+
+        # Initialize shard tracking with open writer
+        shard_idx = 0
+        current_shard_count = 0
+        total_examples = 0
+
+        # Open first writer
+        shard_path = os.path.join(output_dir, f'denoiser-{shard_idx:05d}.tfrecord')
+        writer = tf.io.TFRecordWriter(shard_path)
+
+        # imap keeps input order, so shard contents are deterministic
+        jobs = [(clean_path, noisy_path, snr, max_mag) for clean_path, noisy_path, snr in pairs]
+        for serialized_examples in tqdm(pool.imap(_serialize_pair, jobs, chunksize=4),
+                                        total=len(jobs), desc="Processing & Writing"):
+            # Write each example immediately
+            for serialized in serialized_examples:
+                # Check if we need a new shard
+                if current_shard_count >= samples_per_shard:
+                    writer.close()
+                    shard_idx += 1
+                    current_shard_count = 0
+                    shard_path = os.path.join(output_dir, f'denoiser-{shard_idx:05d}.tfrecord')
+                    writer = tf.io.TFRecordWriter(shard_path)
+
+                writer.write(serialized)
+                current_shard_count += 1
+                total_examples += 1
+
     # Close final writer
     if writer is not None:
         writer.close()
-    
+
     num_shards = shard_idx + 1
-    
-    num_shards = shard_idx
     print(f"\nCreated {num_shards} TFRecord shards with {total_examples} total examples")
 
     # Save dataset info
@@ -402,7 +418,7 @@ if __name__ == "__main__":
     parser.add_argument('--samples-per-shard', type=int,
                         default=5000, help='Examples per shard')
     parser.add_argument('--workers', type=int, default=None,
-                        help='Number of worker threads')
+                        help='Number of worker processes (default: all CPU cores)')
 
     args = parser.parse_args()
 
